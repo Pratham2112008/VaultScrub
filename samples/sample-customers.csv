@@ -1,0 +1,6 @@
+customer_id,full_name,email,ssn,phone,card_number,iban,ip_address,plan,notes
+1001,Elena Rostova,elena.rostova@example.com,123-45-6789,(415) 555-0132,4532-0151-1283-0366,DE89370400440532013000,192.0.2.14,enterprise,Primary billing contact
+1002,Marcus Vance,marcus.vance@example.org,987-65-4321,212-555-0188,4532-0151-1283-0366,GB82WEST12345698765432,198.51.100.42,pro,Repeat card on file
+1003,Aria Chen,aria.chen@example.net,234-56-7890,+1-650-555-0147,4916-3385-0608-2832,FR1420041010050500013M02606,203.0.113.77,starter,Migrated from legacy CRM
+1004,Noah Patel,noah.patel@vaultscrub.test,345-67-8901,312-555-0164,,NL91ABNA0417164300,2001:0db8:85a3:0000:0000:8a2e:0370:7334,enterprise,IPv6 VPN gateway user
+1005,Sofia Morales,sofia.morales@example.com,456-78-9012,404-555-0119,4539-1488-0343-6467,ES9121000418450200051332,10.24.8.15,pro,Internal sandbox account

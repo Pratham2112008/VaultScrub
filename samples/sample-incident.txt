@@ -1,0 +1,18 @@
+=== VaultScrub Incident & Config Dump (Synthetic Test Data) ===
+
+2026-11-27T09:14:22Z INFO  auth-gateway   user=maya.lin@example.com ip=192.0.2.25 ipv6=2001:db8:1:2:3:4:5:6
+2026-11-27T09:14:23Z WARN  billing-worker card=4532-0151-1283-0366 ssn=123-45-6789 phone=(415) 555-0194
+2026-11-27T09:14:24Z ERROR deploy-hook    url=https://ci_bot:DemoPass99@git.example.test/repo?token=ghp_1234567890abcdef1234567890abcdef
+2026-11-27T09:14:25Z DEBUG session-trace  jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzQyIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+2026-11-27T09:14:26Z INFO  payout-sync    iban=DE89370400440532013000 contact=maya.lin@example.com
+
+# Example .env leak
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+STRIPE_SECRET_KEY=sk_test_51N9xYzAbCdEfGhIjKlMnOpQr
+SERVICE_API_KEY=vs_demo_secret_token_987654321
+
+# Example PEM block (synthetic dummy payload)
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF8PbnGy0AHB7M5ExampleDummyKey
+DataBlockForLocalRedactionTestingOnlyNotARealCryptographicKey000001
+-----END RSA PRIVATE KEY-----

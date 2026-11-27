@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="rgba(244,242,239,0.12)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="600" fill="#070707"/>
+  <rect width="900" height="600" fill="url(#glow)"/>
+  <line x1="0" y1="0" x2="0" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="60" y1="0" x2="60" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="120" y1="0" x2="120" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="180" y1="0" x2="180" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="240" y1="0" x2="240" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="300" y1="0" x2="300" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="360" y1="0" x2="360" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="420" y1="0" x2="420" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="480" y1="0" x2="480" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="540" y1="0" x2="540" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="600" y1="0" x2="600" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="660" y1="0" x2="660" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="720" y1="0" x2="720" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="780" y1="0" x2="780" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="840" y1="0" x2="840" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="900" y1="0" x2="900" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="0" x2="900" y2="0" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="60" x2="900" y2="60" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="120" x2="900" y2="120" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="180" x2="900" y2="180" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="240" x2="900" y2="240" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="300" x2="900" y2="300" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="360" x2="900" y2="360" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="420" x2="900" y2="420" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="480" x2="900" y2="480" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="540" x2="900" y2="540" stroke="rgba(244,242,239,0.035)" stroke-width="1"/><line x1="0" y1="600" x2="900" y2="600" stroke="rgba(244,242,239,0.035)" stroke-width="1"/>
+  <rect x="36" y="36" width="828" height="528" rx="8" fill="#0d0d0d" stroke="rgba(244,242,239,0.22)" stroke-width="1.5"/>
+  <circle cx="68" cy="72" r="5" fill="rgba(244,242,239,0.45)"/>
+  <circle cx="88" cy="72" r="5" fill="rgba(244,242,239,0.28)"/>
+  <circle cx="108" cy="72" r="5" fill="rgba(244,242,239,0.15)"/>
+  <text x="836" y="77" text-anchor="end" fill="#8c8783" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">pdfExtractor.js</text>
+  <line x1="36" y1="104" x2="864" y2="104" stroke="rgba(244,242,239,0.12)" stroke-width="1"/>
+  <text x="68" y="154" fill="#f4f2ef" font-family="Georgia, serif" font-size="32" letter-spacing="1">LOCAL PDF WORKER</text>
+  <text x="68" y="210" fill="#e5e0da" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20">import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";</text>
+  <text x="68" y="254" fill="#e5e0da" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20">pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;</text>
+  <text x="68" y="298" fill="#e5e0da" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20">const pdf = await pdfjsLib.getDocument({ data }).promise;</text>
+  <text x="68" y="342" fill="#8c8783" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20">// Resumes &amp; contracts parsed 100% offline</text>
+  <text x="68" y="386" fill="#8c8783" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20">// Zero CDN requests · CSP worker-src self blob:</text>
+  <line x1="68" y1="522" x2="832" y2="522" stroke="rgba(244,242,239,0.1)" stroke-width="1"/>
+  <text x="68" y="548" fill="#8c8783" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15">VAULTSCRUB // 0 BYTES SENT · CLIENT-SIDE ONLY</text>
+</svg>

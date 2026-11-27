@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; worker-src 'self' blob:; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self';" />
+  <title>VaultScrub Workbench — Local-First Data Scrubber</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="bg-backdrop" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-blob bg-blob-primary"></div>
+    <div class="bg-blob bg-blob-secondary"></div>
+    <div class="bg-spotlight"></div>
+  </div>
+
+  <div id="app-shell" class="app-shell" data-testid="app-shell">
+    <div id="boot-warning" class="boot-warning" data-testid="boot-warning" role="alert">
+      <strong>Local HTTP server required:</strong> Browsers block ES modules over <code>file://</code>. Run <code>npm run dev</code> or <code>npm run preview</code> in the VaultScrub folder.
+    </div>
+
+    <header id="app-header" class="app-header entrance-item" data-testid="app-header">
+      <div class="brand-group">
+        <a class="brand-home-link" href="./index.html" data-testid="nav-home-link" aria-label="Back to VaultScrub landing page">
+          <span class="brand-mark" aria-hidden="true">
+            <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.5L4.5 5.8v5.7c0 5.3 3.2 9.8 7.5 11.2 4.3-1.4 7.5-5.9 7.5-11.2V5.8L12 2.5z" />
+              <path d="M8.5 8.5h7" />
+              <path d="M8.5 13l2.3 2.3 4.7-4.8" />
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-title">VaultScrub</span>
+            <span class="brand-subtitle">Zero-egress PII &amp; secret redaction engine</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="header-right">
+        <div id="privacy-panel" class="privacy-panel" data-testid="privacy-panel" data-local-only="true" data-network-calls="0" data-persistence="memory-only" data-scan-locked="false">
+          <span class="privacy-pill-group">
+            <span class="privacy-live-dot" aria-hidden="true"></span>
+            <svg class="privacy-lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="11" width="16" height="10" rx="2" />
+              <path class="privacy-lock-shackle" d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <span id="privacy-status" class="privacy-pill" data-testid="privacy-status" data-state="verified">0 Bytes Sent • 100% Local</span>
+          </span>
+          <span id="privacy-network" class="privacy-meta" data-testid="privacy-network">Network requests: 0</span>
+          <span id="privacy-storage" class="privacy-meta" data-testid="privacy-storage">Memory only</span>
+          <span id="privacy-bytes" class="privacy-meta" data-testid="privacy-bytes">0 B processed</span>
+          <span id="privacy-online-badge" class="privacy-meta" data-testid="privacy-online-badge">Online</span>
+          <button id="zero-trust-info-btn" class="btn btn-ghost" type="button" data-testid="zero-trust-info-btn">Proof</button>
+        </div>
+
+        <div id="theme-switcher" class="theme-switcher" data-testid="theme-switcher" role="group" aria-label="Theme preference">
+          <button id="theme-btn-auto" class="theme-btn" type="button" data-testid="theme-btn-auto" data-theme-choice="auto" data-active="true" aria-pressed="true">Auto</button>
+          <button id="theme-btn-light" class="theme-btn" type="button" data-testid="theme-btn-light" data-theme-choice="light" data-active="false" aria-pressed="false">Light</button>
+          <button id="theme-btn-dark" class="theme-btn" type="button" data-testid="theme-btn-dark" data-theme-choice="dark" data-active="false" aria-pressed="false">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section id="controls-bar" class="controls-bar entrance-item" data-testid="controls-bar" aria-label="Scrubbing controls">
+      <div class="control-group">
+        <label class="control-label" for="input-mode-select">Format</label>
+        <select id="input-mode-select" class="control-select" data-testid="input-mode-select">
+          <option value="auto">Auto-detect</option>
+          <option value="text">Plain Text</option>
+          <option value="csv">CSV / TSV</option>
+          <option value="json">JSON</option>
+        </select>
+
+        <label class="control-label" for="redaction-mode-select">Redaction</label>
+        <select id="redaction-mode-select" class="control-select" data-testid="redaction-mode-select">
+          <option value="token">Consistent Pseudonymization ([EMAIL_1])</option>
+          <option value="mask">Partial Mask (j***@domain)</option>
+          <option value="remove">Full Mask ([REDACTED])</option>
+          <option value="hash">Deterministic Hash ([EMAIL#...])</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button id="sample-logs-btn" class="btn btn-secondary" type="button" data-testid="sample-logs-btn">Load Log Sample</button>
+        <button id="sample-india-btn" class="btn btn-secondary" type="button" data-testid="sample-india-btn">Indian PII Sample</button>
+        <button id="sample-csv-btn" class="btn btn-secondary" type="button" data-testid="sample-csv-btn">Load CSV Sample</button>
+        <button id="sample-json-btn" class="btn btn-secondary" type="button" data-testid="sample-json-btn">Load JSON Sample</button>
+        <button id="clear-input-btn" class="btn btn-ghost" type="button" data-testid="clear-input-btn">Clear</button>
+      </div>
+    </section>
+
+    <main id="workbench-grid" class="workbench-grid" data-testid="workbench-grid">
+      <section id="input-section" class="panel input-panel entrance-item" data-testid="input-section" data-drag-over="false" data-parsing="false" aria-labelledby="input-heading">
+        <div class="panel-header">
+          <div class="panel-title-row">
+            <h1 id="input-heading" class="panel-title">Raw Input</h1>
+            <span id="input-format-badge" class="format-badge" data-testid="input-format-badge" data-format="text">TEXT</span>
+          </div>
+          <span id="input-stats" class="panel-meta" data-testid="input-stats" aria-live="polite">0 lines · 0 chars</span>
+        </div>
+
+        <div class="input-drop-shell">
+          <div id="file-drop-status" class="file-drop-status" data-testid="file-drop-status" data-upload-state="idle">
+            <span class="upload-indicator">
+              <svg class="upload-svg" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                <circle class="upload-ring" cx="18" cy="18" r="15" stroke-width="2.5" pathLength="100" />
+                <path class="upload-check" d="M12 18.5l4 4 8-8.5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span id="file-drop-label" data-testid="file-drop-label">Drop a .txt, .csv, .json, or .pdf file here</span>
+            </span>
+            <input id="file-upload-input" class="file-input-hidden" type="file" data-testid="file-upload-input" accept=".txt,.log,.csv,.tsv,.json,.env,.pdf" aria-label="Upload file to scrub" />
+            <button id="file-upload-btn" class="btn btn-secondary" type="button" data-testid="file-upload-btn">Browse File</button>
+          </div>
+
+          <div class="parse-progress-wrap" aria-hidden="true">
+            <span id="parse-progress-label" class="panel-meta" data-testid="parse-progress-label">Scanning dataset locally… 0%</span>
+            <div class="parse-progress-track">
+              <div class="parse-progress-fill"></div>
+            </div>
+          </div>
+
+          <textarea
+            id="input-textarea"
+            class="code-textarea"
+            data-testid="input-textarea"
+            spellcheck="false"
+            placeholder="Paste logs, resumes, Indian PII (Aadhaar/PAN/UPI/GSTIN/IFSC), CSV tables, or JSON payloads here..."
+          ></textarea>
+        </div>
+
+        <div class="category-bar">
+          <span class="category-bar-label">Active Detectors (click to toggle)</span>
+          <div id="category-filters" class="category-filters" data-testid="category-filters"></div>
+        </div>
+      </section>
+
+      <section id="diff-section" class="panel diff-panel entrance-item" data-testid="diff-section" data-view="diff" aria-labelledby="diff-heading">
+        <div class="panel-header">
+          <div class="panel-title-row">
+            <h2 id="diff-heading" class="panel-title">Scrubbed Output</h2>
+            <div class="view-tabs" role="tablist" aria-label="Output view">
+              <button id="view-tab-diff" class="tab-btn" type="button" role="tab" data-testid="view-tab-diff" data-view-target="diff" data-active="true" aria-pressed="true">Highlighted</button>
+              <button id="view-tab-split" class="tab-btn" type="button" role="tab" data-testid="view-tab-split" data-view-target="split" data-active="false" aria-pressed="false">Split</button>
+              <button id="view-tab-clean" class="tab-btn" type="button" role="tab" data-testid="view-tab-clean" data-view-target="clean" data-active="false" aria-pressed="false">Clean Text</button>
+              <button id="view-tab-table" class="tab-btn" type="button" role="tab" data-testid="view-tab-table" data-view-target="table" data-active="false" aria-pressed="false">Table</button>
+              <button id="view-tab-rehydrate" class="tab-btn" type="button" role="tab" data-testid="view-tab-rehydrate" data-view-target="rehydrate" data-active="false" aria-pressed="false">Re-hydrate</button>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="copy-output-btn" class="btn btn-primary" type="button" data-testid="copy-output-btn">
+              <svg class="btn-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+              <span>Copy Clean</span>
+            </button>
+            <button id="export-clean-btn" class="btn btn-secondary" type="button" data-testid="export-clean-btn">
+              <svg class="btn-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+              <span>Download Text/CSV</span>
+            </button>
+            <button id="export-pdf-btn" class="btn btn-secondary" type="button" data-testid="export-pdf-btn">
+              <svg class="btn-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+              <span>Download PDF</span>
+            </button>
+            <button id="export-vault-btn" class="btn btn-secondary" type="button" data-testid="export-vault-btn">
+              <span>Export Encrypted Key</span>
+            </button>
+            <button id="export-cert-json-btn" class="btn btn-secondary" type="button" data-testid="export-cert-json-btn">
+              <span>Audit Cert .json</span>
+            </button>
+            <button id="export-cert-pdf-btn" class="btn btn-secondary" type="button" data-testid="export-cert-pdf-btn">
+              <span>Audit Cert .pdf</span>
+            </button>
+            <button id="export-report-md-btn" class="btn btn-ghost" type="button" data-testid="export-report-md-btn">
+              <span>Audit .md</span>
+            </button>
+            <button id="export-report-json-btn" class="btn btn-ghost" type="button" data-testid="export-report-json-btn">
+              <span>Audit .json</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="whitelist-bar" class="whitelist-bar" data-testid="whitelist-bar" data-open="false" data-has-whitelisted="false">
+          <div class="whitelist-info">
+            <span id="whitelist-target-label" class="whitelist-target-label" data-testid="whitelist-target-label">Click any PII highlight to ignore or whitelist it.</span>
+          </div>
+          <div class="whitelist-actions">
+            <button id="whitelist-one-btn" class="btn btn-secondary" type="button" data-testid="whitelist-one-btn">Ignore This Match</button>
+            <button id="whitelist-all-btn" class="btn btn-secondary" type="button" data-testid="whitelist-all-btn">Whitelist All Matching</button>
+            <button id="whitelist-dismiss-btn" class="btn btn-ghost" type="button" data-testid="whitelist-dismiss-btn">Dismiss</button>
+            <button id="whitelist-reset-btn" class="btn btn-ghost" type="button" data-testid="whitelist-reset-btn">Reset Whitelist (0)</button>
+          </div>
+        </div>
+
+        <div id="output-stage" class="output-stage" data-testid="output-stage">
+          <svg id="diff-connector-svg" class="diff-connector-svg" data-testid="diff-connector-svg" data-active="false" aria-hidden="true">
+            <path id="diff-connector-path" class="diff-connector-path" data-testid="diff-connector-path" d="M 0 0" />
+          </svg>
+          <pre id="original-preview" class="code-surface original-preview" data-testid="original-preview" aria-label="Original input preview"></pre>
+          <pre id="diff-viewer" class="code-surface diff-viewer" data-testid="diff-viewer" data-scanning="false" data-batch-fade="false" aria-label="Highlighted scrubbed output"></pre>
+          <textarea id="clean-output" class="code-textarea clean-output" data-testid="clean-output" readonly aria-label="Clean scrubbed text"></textarea>
+          <div id="table-viewer" class="table-viewer" data-testid="table-viewer" aria-label="Interactive CSV table view"></div>
+
+          <div id="rehydrate-panel" class="rehydrate-panel" data-testid="rehydrate-panel" aria-label="Encrypted re-hydration workbench">
+            <div class="rehydrate-step">
+              <label class="control-label" for="rehydrate-input">1. Paste AI Response (containing tokens like [EMAIL_1], [PAN_1])</label>
+              <textarea id="rehydrate-input" class="code-textarea rehydrate-textarea" data-testid="rehydrate-input" spellcheck="false" placeholder="Paste ChatGPT / Claude response containing [EMAIL_1], [PAN_1], etc..."></textarea>
+            </div>
+            <div class="rehydrate-controls">
+              <input id="vault-file-input" class="file-input-hidden" type="file" data-testid="vault-file-input" accept=".json,.vault.json" aria-label="Upload .vault.json key file" />
+              <button id="vault-file-btn" class="btn btn-secondary" type="button" data-testid="vault-file-btn">Upload .vault.json Key</button>
+              <span id="vault-file-label" class="panel-meta" data-testid="vault-file-label">No key file selected</span>
+              <input id="rehydrate-passphrase" class="control-input" type="password" data-testid="rehydrate-passphrase" placeholder="Enter passphrase" aria-label="Vault passphrase" />
+              <button id="rehydrate-run-btn" class="btn btn-primary" type="button" data-testid="rehydrate-run-btn">Decrypt &amp; Restore</button>
+            </div>
+            <div class="rehydrate-step">
+              <div class="panel-header">
+                <label class="control-label" for="rehydrate-output">Restored Output (100% Local)</label>
+                <button id="rehydrate-copy-btn" class="btn btn-secondary" type="button" data-testid="rehydrate-copy-btn">Copy Restored</button>
+              </div>
+              <textarea id="rehydrate-output" class="code-textarea rehydrate-textarea" data-testid="rehydrate-output" readonly placeholder="Decrypted response with original values restored will appear here..."></textarea>
+              <p id="rehydrate-status" class="panel-meta" data-testid="rehydrate-status"></p>
+            </div>
+          </div>
+        </div>
+
+        <p id="action-feedback" class="action-feedback" data-testid="action-feedback" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <section id="insights-grid" class="insights-grid" data-testid="insights-grid" aria-label="Risk and detection analytics">
+      <article id="risk-panel" class="panel risk-panel" data-testid="risk-panel" data-risk-level="none" data-score="0" data-reveal="hidden">
+        <div class="panel-header">
+          <h2 class="panel-title">Exposure Risk &amp; Integrity</h2>
+          <span id="risk-badge" class="risk-badge" data-testid="risk-badge" data-risk-level="none">NONE</span>
+        </div>
+        <div class="risk-gauge-row">
+          <div class="risk-gauge-box" aria-hidden="true">
+            <svg class="risk-gauge-svg" viewBox="0 0 120 72">
+              <path class="risk-gauge-track" d="M 14 62 A 46 46 0 0 1 106 62" pathLength="100" />
+              <path id="risk-gauge-arc" class="risk-gauge-arc" data-testid="risk-gauge-arc" d="M 14 62 A 46 46 0 0 1 106 62" pathLength="100" stroke-dashoffset="100" />
+            </svg>
+          </div>
+          <div class="risk-score-stack">
+            <span id="risk-score" class="risk-score" data-testid="risk-score" aria-live="polite">0 / 100</span>
+            <span id="risk-delta-pill" class="risk-delta-pill" data-testid="risk-delta-pill">After scrub: 0 / 100</span>
+            <progress id="risk-meter" class="risk-meter" data-testid="risk-meter" max="100" value="0" data-risk-level="none"></progress>
+          </div>
+        </div>
+        <div id="risk-severities" class="risk-severities" data-testid="risk-severities"></div>
+        <ul id="risk-reasons" class="risk-reasons" data-testid="risk-reasons"></ul>
+        <div class="hash-box">
+          <div class="hash-row">
+            <span class="hash-label">Original SHA-256</span>
+            <code id="hash-original" class="hash-value" data-testid="hash-original">—</code>
+          </div>
+          <div class="hash-row">
+            <span class="hash-label">Sanitized SHA-256</span>
+            <code id="hash-sanitized" class="hash-value" data-testid="hash-sanitized">—</code>
+          </div>
+        </div>
+      </article>
+
+      <article id="counts-panel" class="panel counts-panel" data-testid="counts-panel" data-empty="true" data-reveal="hidden">
+        <div class="panel-header">
+          <h2 class="panel-title">Detection Counts</h2>
+          <div class="counts-summary" aria-live="polite">
+            <span id="counts-total" class="count-kpi" data-testid="counts-total">0 findings</span>
+            <span id="counts-unique" class="count-kpi" data-testid="counts-unique">0 unique</span>
+            <span id="counts-categories" class="count-kpi" data-testid="counts-categories">0 types</span>
+          </div>
+        </div>
+        <ul id="counts-list" class="counts-list" data-testid="counts-list"></ul>
+      </article>
+
+      <article id="columns-panel" class="panel columns-panel" data-testid="columns-panel" data-format="text" data-has-columns="false" data-reveal="hidden">
+        <div class="panel-header">
+          <h2 class="panel-title">Structured Columns</h2>
+          <span id="columns-format-hint" class="panel-meta" data-testid="columns-format-hint">Auto CSV / JSON</span>
+        </div>
+        <div id="columns-list" class="columns-list" data-testid="columns-list"></div>
+      </article>
+    </section>
+  </div>
+
+  <!-- Passphrase Modal for Export Encrypted Key -->
+  <div id="vault-modal" class="modal-backdrop" data-testid="vault-modal" data-open="false" role="dialog" aria-modal="true" aria-labelledby="vault-modal-title">
+    <div class="panel modal-card">
+      <h2 id="vault-modal-title" class="panel-title">Export Encrypted Key (.vault.json)</h2>
+      <p class="feature-copy">Encrypts the bidirectional pseudonym mapping using <strong>AES-GCM-256 + PBKDF2 (250k iterations)</strong> locally in your browser.</p>
+      <label class="control-label" for="vault-passphrase-input">Passphrase (min 4 characters)</label>
+      <input id="vault-passphrase-input" class="control-input" type="password" data-testid="vault-passphrase-input" placeholder="Enter strong passphrase" />
+      <p id="vault-modal-error" class="modal-error" data-testid="vault-modal-error"></p>
+      <div class="modal-actions">
+        <button id="vault-cancel-btn" class="btn btn-ghost" type="button" data-testid="vault-cancel-btn">Cancel</button>
+        <button id="vault-confirm-btn" class="btn btn-primary" type="button" data-testid="vault-confirm-btn">Encrypt &amp; Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zero-Trust Proof Modal -->
+  <div id="zero-trust-modal" class="modal-backdrop" data-testid="zero-trust-modal" data-open="false" role="dialog" aria-modal="true" aria-labelledby="zero-trust-modal-title">
+    <div class="panel modal-card">
+      <h2 id="zero-trust-modal-title" class="panel-title">Zero-Trust Local Execution Proof</h2>
+      <ul class="risk-reasons">
+        <li class="risk-reason-item"><strong>0 Bytes Sent:</strong> Strict CSP (<code>connect-src 'self'</code>) blocks all external network requests.</li>
+        <li class="risk-reason-item"><strong>Web Crypto Only:</strong> AES-GCM key encryption and SHA-256 digests run natively via <code>crypto.subtle</code>.</li>
+        <li class="risk-reason-item"><strong>Offline PWA:</strong> Service Worker pre-caches HTML, JS, CSS, and the local PDF.js worker for offline operation.</li>
+        <li class="risk-reason-item"><strong>Connection State:</strong> <span id="zero-trust-online-detail" data-testid="zero-trust-online-detail">Online</span></li>
+      </ul>
+      <div class="modal-actions">
+        <button id="zero-trust-close-btn" class="btn btn-primary" type="button" data-testid="zero-trust-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-region" class="toast-region" data-testid="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="./motion.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

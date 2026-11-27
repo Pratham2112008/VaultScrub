@@ -1,0 +1,20 @@
+{
+  "name": "vaultscrub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first sensitive data detection, redaction, and risk classification workbench.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 8765",
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "jspdf": "^4.2.1",
+    "pdfjs-dist": "^6.5.438"
+  },
+  "devDependencies": {
+    "vite": "^8.4.0"
+  }
+}

@@ -1,6 +1,13 @@
 /**
- * Client-side AES-GCM + PBKDF2 Encrypted Key Vault & Re-hydration logic.
- * Uses browser/Web Crypto API (crypto.subtle) with zero network calls.
+ * @module cryptoVault
+ * @description Client-side AES-GCM + PBKDF2 Encrypted Key Vault & Re-hydration.
+ *
+ * Encrypts bidirectional pseudonym token mappings into a portable `.vault.json`
+ * file using AES-GCM-256 with a user passphrase derived via PBKDF2-SHA256
+ * (250 000 iterations). Provides decryption, AI-response re-hydration
+ * (restoring `[EMAIL_1]` back to original values), and SHA-256 hex hashing.
+ *
+ * Uses the Web Crypto API (`crypto.subtle`) with zero network calls.
  */
 
 const VAULT_FORMAT = 'vaultscrub-key-v1';

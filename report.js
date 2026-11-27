@@ -1,6 +1,13 @@
 /**
- * Pure audit report builder and serializers for VaultScrub.
- * Zero DOM or browser global dependencies.
+ * @module report
+ * @description Pure audit report builder and serializers for VaultScrub.
+ *
+ * Assembles a structured report from pipeline results (detections, redaction
+ * stats, risk classification, column analysis, privacy telemetry) and
+ * serializes it to both JSON and human-readable Markdown — without ever
+ * including raw secret values in the output.
+ *
+ * Zero DOM or browser global dependencies — safe for Node.js test execution.
  */
 
 import { DETECTOR_CATALOG } from './detectors.js';

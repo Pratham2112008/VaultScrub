@@ -1,7 +1,12 @@
 /**
- * Pure RFC-4180-compatible CSV/TSV parser and serializer.
- * Handles quoted fields, embedded commas, escaped quotes, and multiline cells.
- * Zero DOM dependencies.
+ * @module csvParser
+ * @description Pure RFC-4180-compatible CSV/TSV parser and serializer.
+ *
+ * Handles quoted fields, embedded commas/tabs/semicolons, escaped double
+ * quotes (`""`), multiline cells, automatic delimiter detection (comma, tab,
+ * semicolon), and round-trip serialization with proper cell escaping.
+ *
+ * Zero DOM dependencies — safe for Node.js test execution.
  */
 
 /**

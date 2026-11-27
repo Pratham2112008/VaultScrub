@@ -1,6 +1,29 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+
+# Environment files
 .env
 .env.*
+.env.local
+.env.production
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Coverage
+coverage/

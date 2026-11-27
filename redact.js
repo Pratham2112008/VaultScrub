@@ -1,6 +1,14 @@
 /**
- * Pure redaction & diff-segmentation logic for VaultScrub.
- * Zero DOM or browser global dependencies.
+ * @module redact
+ * @description Pure redaction & diff-segmentation engine for VaultScrub.
+ *
+ * Implements four redaction modes (token, mask, hash, remove), consistent
+ * pseudonym token assignment across repeated values, partial value masking
+ * per-category, deterministic FNV-1a hashing, structured CSV/JSON cell-by-cell
+ * redaction with column overrides, and bidirectional mapping export for
+ * encrypted key vault re-hydration.
+ *
+ * Zero DOM or browser global dependencies — safe for Node.js test execution.
  */
 
 import { escapeCsvCell } from './csvParser.js';

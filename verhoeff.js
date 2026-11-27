@@ -1,7 +1,13 @@
 /**
- * Pure Verhoeff checksum validation for Indian Aadhaar numbers.
- * Uses the standard d (dihedral), p (permutation), and inv lookup tables.
- * Zero DOM dependencies.
+ * @module verhoeff
+ * @description Pure Verhoeff checksum validation for Indian Aadhaar numbers.
+ *
+ * Implements the Verhoeff algorithm using standard dihedral group
+ * multiplication (d), permutation (p), and inverse (inv) lookup tables.
+ * Validates 12-digit Aadhaar numbers (must not start with 0 or 1,
+ * must not be all identical digits, and must pass the Verhoeff checksum).
+ *
+ * Zero DOM dependencies — safe for Node.js test execution.
  */
 
 // Multiplication table d(j, k)

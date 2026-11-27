@@ -3,7 +3,39 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Local-first sensitive data detection, redaction, and risk classification workbench.",
+  "description": "Zero-egress, 100% client-side PII & secret detection, redaction, and compliance-auditing workbench.",
+  "author": "Pratham Parmar <parmarpratham101@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pratham2112008/VaultScrub.git"
+  },
+  "homepage": "https://github.com/Pratham2112008/VaultScrub#readme",
+  "bugs": {
+    "url": "https://github.com/Pratham2112008/VaultScrub/issues"
+  },
+  "keywords": [
+    "pii",
+    "redaction",
+    "privacy",
+    "data-scrubbing",
+    "aadhaar",
+    "pan",
+    "credit-card",
+    "luhn",
+    "verhoeff",
+    "audit",
+    "zero-egress",
+    "client-side",
+    "offline",
+    "pwa",
+    "aes-gcm",
+    "sha256"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -1,7 +1,18 @@
 /**
- * VaultScrub UI Wiring & State Orchestrator.
- * Connects stable id / data-testid DOM elements to pure logic modules
- * and renders via small, focused render functions from a single state object.
+ * @module app
+ * @description VaultScrub UI Wiring & State Orchestrator.
+ *
+ * Connects stable `data-testid` DOM elements to pure logic modules
+ * (`detectors`, `redact`, `classify`, `report`, `cryptoVault`, `auditReport`)
+ * and renders via six focused render functions driven from a single immutable
+ * state snapshot. No inline styles — all visual changes go through CSS custom
+ * properties, `data-*` attributes, and class names.
+ *
+ * @architecture
+ * - `createInitialState()` → initial state object
+ * - `computeState(state)` → derived state with detections, redactions, risk, report
+ * - `renderAll(state, root)` → six render functions update the DOM
+ * - `initApp(root)` → wires DOM events, maintains state loop, returns `{ getState }`
  */
 
 import { DETECTOR_CATALOG, detectSensitiveData, detectStructuredFormat } from './detectors.js';
@@ -15,6 +26,11 @@ import {
   computeSha256Hex,
 } from './cryptoVault.js';
 
+/**
+ * Frozen map of all `data-testid`-based CSS selectors used by the workbench.
+ * Tests verify every selector has a matching element in `workbench.html`.
+ * @type {Readonly<Record<string, string>>}
+ */
 export const SELECTORS = Object.freeze({
   appShell: '[data-testid="app-shell"]',
   inputSection: '[data-testid="input-section"]',
@@ -125,9 +141,17 @@ export const SELECTORS = Object.freeze({
   privacyOnlineBadge: '[data-testid="privacy-online-badge"]',
 });
 
+/** @constant {string} localStorage key for persisted theme preference. */
 const THEME_STORAGE_KEY = 'vaultscrub-theme';
+
+/** @constant {number} Threshold above which per-finding animations are skipped for performance. */
 const PER_FINDING_ANIMATION_CAP = 200;
 
+/**
+ * Pre-built sample datasets for one-click demo loading.
+ * Each key maps to a formatted string ready for the input textarea.
+ * @type {Readonly<Record<string, string>>}
+ */
 const SAMPLE_DATA = Object.freeze({
   logs: [
     '2026-11-27T09:14:22Z INFO auth-gateway user=maya.lin@acme-corp.io ip=192.168.14.22',
@@ -171,8 +195,19 @@ const SAMPLE_DATA = Object.freeze({
 });
 
 /**
- * Create the initial single application state object.
- * @returns {object}
+ * Create the initial single application state object with defaults.
+ * @returns {AppState} Fresh state with empty input, all detectors enabled, and token redaction mode.
+ * @typedef {Object} AppState
+ * @property {string} rawText - Current raw input text.
+ * @property {'auto'|'text'|'csv'|'json'} inputMode - Input format override.
+ * @property {'token'|'mask'|'hash'|'remove'} redactionMode - Active redaction strategy.
+ * @property {'diff'|'split'|'clean'|'table'|'rehydrate'} activeView - Active output tab.
+ * @property {'auto'|'light'|'dark'} theme - Current theme preference.
+ * @property {Set<string>} enabledCategories - Active detector category IDs.
+ * @property {Record<string, 'redact'|'keep'>} columnOverrides - Per-column action overrides.
+ * @property {Set<string>} suppressedFindingIds - Single-finding ignore IDs.
+ * @property {Set<string>} whitelistedValues - Globally whitelisted raw values.
+ * @property {Object} privacy - Zero-trust privacy telemetry.
  */
 export function createInitialState() {
   const enabledCategories = new Set(
@@ -227,9 +262,14 @@ export function createInitialState() {
 }
 
 /**
- * Run all pure-logic modules to derive a fresh state snapshot.
- * @param {object} currentState
- * @returns {object}
+ * Run all pure-logic modules to derive a fully computed state snapshot.
+ *
+ * Pipeline: detect → classify columns → redact → classify risk → build report.
+ * This function is pure: given the same input state, it always returns
+ * the same derived state (excluding object identity).
+ *
+ * @param {AppState} currentState - Current application state with rawText and config.
+ * @returns {AppState} New state with computed detections, redacted output, risk, and report.
  */
 export function computeState(currentState) {
   const structured = detectStructuredFormat(currentState.rawText, currentState.inputMode);
@@ -316,10 +356,21 @@ export function computeState(currentState) {
   return nextState;
 }
 
+/**
+ * Shorthand DOM query that delegates to `root.querySelector`.
+ * @param {string} selector - CSS selector string.
+ * @param {Document|DocumentFragment} [root=document] - Query root.
+ * @returns {Element|null}
+ */
 function query(selector, root = document) {
   return root.querySelector(selector);
 }
 
+/**
+ * Format a byte count into a human-readable string with units.
+ * @param {number} bytes - Raw byte count.
+ * @returns {string} Formatted string like "1.5 KB processed".
+ */
 function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B processed`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB processed`;
@@ -973,6 +1024,13 @@ export function renderAll(state, root = document) {
   renderPrivacy(state, root);
 }
 
+/**
+ * Trigger a browser file download from in-memory content.
+ * Creates a temporary object URL, clicks a hidden link, then cleans up.
+ * @param {string} filename - Suggested download filename.
+ * @param {string|Blob} content - File content (string or Blob).
+ * @param {string} mimeType - MIME type for string content.
+ */
 function triggerDownload(filename, content, mimeType) {
   const blob = content instanceof Blob ? content : new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -985,6 +1043,11 @@ function triggerDownload(filename, content, mimeType) {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Apply a theme choice to the document and persist it in localStorage.
+ * @param {'auto'|'light'|'dark'} themeChoice - Theme to apply.
+ * @param {Document} [root=document] - Document root for DOM queries.
+ */
 function applyTheme(themeChoice, root = document) {
   const valid = themeChoice === 'light' || themeChoice === 'dark' ? themeChoice : 'auto';
   root.documentElement.dataset.theme = valid;
@@ -1008,6 +1071,11 @@ function applyTheme(themeChoice, root = document) {
   }
 }
 
+/**
+ * Load the saved theme preference from localStorage.
+ * Returns 'auto' if storage is unavailable or the saved value is invalid.
+ * @returns {'auto'|'light'|'dark'}
+ */
 function loadSavedTheme() {
   try {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);

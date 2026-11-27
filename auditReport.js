@@ -1,6 +1,12 @@
 /**
- * Compliance Audit Certificate generator with real SHA-256 digests
- * (via crypto.subtle.digest) and jsPDF certificate export.
+ * @module auditReport
+ * @description Compliance Audit Certificate generator for VaultScrub.
+ *
+ * Builds tamper-evident audit certificates with real SHA-256 digests
+ * (via `crypto.subtle.digest`) and exports them as both structured JSON
+ * and formatted PDF (via jsPDF). Raw PII values are never included in
+ * the certificate payload — only counts, categories, risk levels, and
+ * cryptographic integrity hashes.
  */
 
 import { jsPDF } from 'jspdf';

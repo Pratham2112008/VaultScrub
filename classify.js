@@ -1,6 +1,13 @@
 /**
- * Pure risk and column classification logic for VaultScrub.
- * Zero DOM or browser global dependencies.
+ * @module classify
+ * @description Pure risk scoring and column classification logic for VaultScrub.
+ *
+ * Computes a diminishing-returns `0–100` exposure risk score from detection
+ * severities, classifies individual CSV/JSON columns by content-scanned
+ * hit rate and header-hinted category, and recommends `redact` / `review` /
+ * `keep` actions per column.
+ *
+ * Zero DOM or browser global dependencies — safe for Node.js test execution.
  */
 
 export const RISK_LEVELS = Object.freeze(['none', 'low', 'medium', 'high', 'critical']);

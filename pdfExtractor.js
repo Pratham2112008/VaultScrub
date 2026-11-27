@@ -1,6 +1,12 @@
 /**
- * Client-side PDF text extraction (pdfjs-dist with local bundled worker)
- * and sanitized PDF generation (jsPDF). Zero external CDN calls.
+ * @module pdfExtractor
+ * @description Client-side PDF text extraction and sanitized PDF generation.
+ *
+ * Uses `pdfjs-dist` with a locally bundled worker for zero-CDN PDF text
+ * extraction, and `jsPDF` for generating clean multi-page sanitized PDF
+ * documents from scrubbed output.
+ *
+ * Both operations run entirely in-browser with zero external network calls.
  */
 
 import * as pdfjsLib from 'pdfjs-dist';

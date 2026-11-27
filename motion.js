@@ -1,11 +1,25 @@
 /**
- * VaultScrub Kinetic Motion Engine (visuals & micro-interactions only).
+ * @module motion
+ * @description VaultScrub Kinetic Motion Engine — visual micro-interactions only.
+ *
+ * Manages pointer spotlight, scroll reveals, scan sweep animations, token
+ * decode scramble, eased numeric counter interpolation, split-diff hover
+ * linking with SVG connector, and sliding toast notifications.
+ *
  * Zero coupling to detection/redaction/classification/report business logic.
- * Zero inline styles: uses CSS custom properties via CSSOM sheet and data-* hooks.
+ * Zero inline styles: uses CSS custom properties via CSSOM sheet and `data-*` hooks.
+ *
+ * Respects `prefers-reduced-motion: reduce` throughout — all animations are
+ * skipped or resolved instantly when the user has enabled reduced motion.
  */
 
+/** @constant {string} Character set for the token decode scramble animation. */
 const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*';
+
+/** @constant {number} Maximum number of tokens to animate during decode scramble. */
 const MAX_SCRAMBLE_TOKENS = 40;
+
+/** @constant {number} Detection count above which per-finding animations are skipped. */
 const PER_FINDING_CAP = 200;
 
 function prefersReducedMotion() {

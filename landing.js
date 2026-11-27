@@ -1,7 +1,8 @@
 /**
- * VaultScrub Monochrome 3D Fibonacci Sphere Archive (Landing Page)
- * Implements Splash + 2x Intro Film, Fibonacci 21-card 3D Sphere,
- * Drag-to-rotate + 16vh Scroll Dolly, Flat Grid, FLIP Lightbox,
+ * @module landing
+ * @description VaultScrub Monochrome 3D Fibonacci Sphere Archive (Landing Page)
+ * Implements Splash + Intro Film, Fibonacci 21-card 3D Sphere,
+ * Drag-to-rotate + Scroll Dolly, Flat Grid, FLIP Lightbox,
  * Full-Screen Menu, and Custom Cursor. Zero breaking coupling to workbench.html.
  */
 

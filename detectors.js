@@ -1,6 +1,12 @@
 /**
- * Pure detection logic for VaultScrub.
- * Zero DOM or browser global dependencies.
+ * @module detectors
+ * @description Pure PII & secret detection engine for VaultScrub.
+ *
+ * Implements 16 detector categories with regex rules, validation functions
+ * (Luhn, Verhoeff, IBAN mod-97, SSN area checks, IPv4 range checks, phone
+ * heuristics), overlap resolution, and 1-based line/column position mapping.
+ *
+ * Zero DOM or browser global dependencies — safe for Node.js test execution.
  */
 
 import { isValidAadhaar } from './verhoeff.js';
